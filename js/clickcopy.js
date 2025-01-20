@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         一键复制
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.5
 // @description  复制文本，点击文本自动复制到剪切板，并提供启用/禁用功能。
 // @author       WuJiu
 // @match        *://purse.enlargemagic.com/admin/*
 // @icon         https://img.icons8.com/?size=100&id=guQiTl74cP2t&format=png&color=000000
+// @updateURL    https://github.com/empty-sigh/One-clickcopy/blob/main/js/clickcopy.js
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
@@ -32,7 +33,7 @@
             // 请求最新版本的脚本文件或版本号
             GM_xmlhttpRequest({
                 method: 'GET',
-                url: 'https://example.com/latest-version.json', // 这里填写您的版本信息的URL
+                url: 'https://github.com/empty-sigh/One-clickcopy/blob/main/js/version.json', // 这里填写您的版本信息的URL
                 onload: function(response) {
                     const data = JSON.parse(response.responseText);
                     if (data.version !== currentVersion) {
