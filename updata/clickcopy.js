@@ -8,6 +8,7 @@
 // @icon         https://img.icons8.com/?size=100&id=guQiTl74cP2t&format=png&color=000000
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
+// @grant        GM_addScript
 // ==/UserScript==
 
 (function() {
@@ -15,14 +16,14 @@
 
     // 插件初始状态：复制功能禁用
     let copyEnabled = false;
-    const currentVersion = '0.6'; // 当前版本号
+    const currentVersion = '0.6';  // 当前版本号
 
     // GitHub 版本信息 URL
     const versionFileUrl = 'https://raw.githubusercontent.com/empty-sigh/One-clickcopy/refs/heads/main/updata/version.json';
 
     // 检查更新的函数
     function checkForUpdates() {
-        const checkInterval = 6 * 60 * 60 * 1000; // 每6小时检查一次更新（防止频繁请求）
+        const checkInterval = 6 * 1000;  // 每6小时检查一次更新（防止频繁请求）
 
         // 先判断是否需要进行更新检查
         const lastChecked = localStorage.getItem('lastChecked');
@@ -83,7 +84,9 @@
                 // 执行新的脚本
                 try {
                     const newScript = response.responseText;
-                    eval(newScript); // 动态加载新的脚本
+                    const scriptElement = document.createElement('script');
+                    scriptElement.textContent = newScript;  // 将脚本内容赋给 script 标签
+                    document.head.appendChild(scriptElement);  // 动态加载新的脚本
                 } catch (e) {
                     console.error('更新失败:', e);
                 }
