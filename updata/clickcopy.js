@@ -6,7 +6,6 @@
 // @author       WuJiu
 // @match        *://purse.enlargemagic.com/admin/*
 // @icon         https://img.icons8.com/?size=100&id=guQiTl74cP2t&format=png&color=000000
-// @updateURL    https://github.com/empty-sigh/One-clickcopy/blob/main/updata/clickcopy.js
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
