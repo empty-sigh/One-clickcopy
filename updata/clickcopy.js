@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         一键复制
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.6
 // @description  复制文本，点击文本自动复制到剪切板，并提供启用/禁用功能。
 // @author       WuJiu
 // @match        *://purse.enlargemagic.com/admin/*
@@ -16,11 +16,14 @@
 
     // 插件初始状态：复制功能禁用
     let copyEnabled = false;
-    const currentVersion = '0.5';  // 当前版本号
+    const currentVersion = '0.6'; // 当前版本号
+
+    // GitHub 版本信息 URL
+    const versionFileUrl = 'https://github.com/empty-sigh/One-clickcopy/blob/main/updata/version.json';
 
     // 检查更新的函数
     function checkForUpdates() {
-        const checkInterval = 6 * 60 * 60 * 1000;  // 每6小时检查一次更新（防止频繁请求）
+        const checkInterval = 6 * 60 * 60 * 1000; // 每6小时检查一次更新（防止频繁请求）
 
         // 先判断是否需要进行更新检查
         const lastChecked = localStorage.getItem('lastChecked');
@@ -30,14 +33,19 @@
         if (!lastChecked || (now - lastChecked) > checkInterval) {
             localStorage.setItem('lastChecked', now);
 
-            // 请求最新版本的脚本文件或版本号
+            // 请求版本信息文件
             GM_xmlhttpRequest({
                 method: 'GET',
-                url:  https://github.com/empty-sigh/One-clickcopy/blob/main/updata/sversion.json', // 这里填写您的版本信息的URL
+                url: versionFileUrl,
                 onload: function(response) {
-                    const data = JSON.parse(response.responseText);
-                    if (data.version !== currentVersion) {
-                        showUpdateNotification();
+                    try {
+                        const data = JSON.parse(response.responseText);
+                        if (data.version !== currentVersion) {
+                            showUpdateNotification();
+                            downloadAndUpdateScript(data.scriptUrl);
+                        }
+                    } catch (e) {
+                        console.error('更新检查失败:', e);
                     }
                 },
                 onerror: function() {
@@ -54,19 +62,58 @@
         tooltip.style.top = '50px';
         tooltip.style.left = '50%';
         tooltip.style.transform = 'translateX(-50%)';
-        tooltip.style.backgroundColor = '#FF9800';
-        tooltip.style.color = '#fff';
+        tooltip.style.color = '#4CAF50';  // 绿色文字
+        tooltip.style.fontSize = '16px';
         tooltip.style.padding = '10px';
-        tooltip.style.borderRadius = '5px';
         tooltip.style.zIndex = '1001';
+        tooltip.style.display = 'none';  // 初始不显示
         tooltip.innerText = '有新版本可用，请更新插件';
         document.body.appendChild(tooltip);
 
-        // 10000ms后自动关闭提示
-        setTimeout(() => {
-            tooltip.style.display = 'none';
-        }, 10000);
+        // 使用动画显示提示框
+        tooltip.style.animation = 'fadeInOut 2s forwards';
+        tooltip.style.display = 'block';  // 显示提示框
     }
+
+    // 下载并更新脚本
+    function downloadAndUpdateScript(scriptUrl) {
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: scriptUrl,
+            onload: function(response) {
+                // 执行新的脚本
+                try {
+                    const newScript = response.responseText;
+                    eval(newScript); // 动态加载新的脚本
+                } catch (e) {
+                    console.error('更新失败:', e);
+                }
+            },
+            onerror: function() {
+                console.error('无法下载更新的脚本');
+            }
+        });
+    }
+
+    // CSS 动画：从顶部显示，慢慢淡出
+    GM_addStyle(`
+        @keyframes fadeInOut {
+            0% {
+                top: 50px;
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                top: 10px;
+                opacity: 0;
+            }
+        }
+    `);
 
     // 缓存控制：在请求时附加时间戳，避免缓存问题
     function appendTimestampToUrl(url) {
@@ -95,21 +142,6 @@
     copyToggle.addEventListener('change', (event) => {
         copyEnabled = event.target.checked;
     });
-
-    // 创建提示框
-    const tooltip = document.createElement('div');
-    tooltip.style.position = 'fixed';
-    tooltip.style.top = '50px';
-    tooltip.style.left = '50%';
-    tooltip.style.transform = 'translateX(-50%)';
-    tooltip.style.backgroundColor = '#4CAF50';
-    tooltip.style.color = '#fff';
-    tooltip.style.padding = '10px';
-    tooltip.style.borderRadius = '5px';
-    tooltip.style.zIndex = '1001';
-    tooltip.style.display = 'none';
-    tooltip.innerText = '复制成功';
-    document.body.appendChild(tooltip);
 
     // 正则表达式：检测 IP 地址（IPv4 和 IPv6）
     const ipv4Regex = /(\b(?:\d{1,3}\.){3}\d{1,3}\b)/;
@@ -153,15 +185,12 @@
         document.body.removeChild(textArea);
 
         // 显示复制成功提示
-        tooltip.style.display = 'block';
-        setTimeout(() => {
-            tooltip.style.display = 'none';
-        }, 500);
+        showUpdateNotification();
     }
 
     // 页面加载后稍等一段时间进行更新检测
     setTimeout(() => {
         checkForUpdates();
-    }, 10000);  // 页面加载后10秒钟进行检查
+    }, 3000);  // 页面加载后3秒钟进行检查
 
 })();
