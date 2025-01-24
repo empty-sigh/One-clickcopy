@@ -6,7 +6,7 @@
 // @author       WuJiu
 // @match        *://purse.enlargemagic.com/admin/*
 // @icon         https://img.icons8.com/?size=100&id=guQiTl74cP2t&format=png&color=000000
-// @updateURL    https://github.com/empty-sigh/One-clickcopy/blob/main/js/clickcopy.js
+// @updateURL    https://github.com/empty-sigh/One-clickcopy/blob/main/updata/clickcopy.js
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
@@ -16,11 +16,11 @@
 
     // 插件初始状态：复制功能禁用
     let copyEnabled = false;
-    const currentVersion = '0.4'; // 当前版本号
+    const currentVersion = '0.5';  // 当前版本号
 
     // 检查更新的函数
     function checkForUpdates() {
-        const checkInterval = 6 * 60 * 60 * 1000; // 每6小时检查一次更新（防止频繁请求）
+        const checkInterval = 6 * 60 * 60 * 1000;  // 每6小时检查一次更新（防止频繁请求）
 
         // 先判断是否需要进行更新检查
         const lastChecked = localStorage.getItem('lastChecked');
@@ -33,7 +33,7 @@
             // 请求最新版本的脚本文件或版本号
             GM_xmlhttpRequest({
                 method: 'GET',
-                url: 'https://github.com/empty-sigh/One-clickcopy/blob/main/js/version.json', // 这里填写您的版本信息的URL
+                url:  https://github.com/empty-sigh/One-clickcopy/blob/main/updata/sversion.json', // 这里填写您的版本信息的URL
                 onload: function(response) {
                     const data = JSON.parse(response.responseText);
                     if (data.version !== currentVersion) {
@@ -78,7 +78,7 @@
     const toggleSwitch = document.createElement('label');
     toggleSwitch.innerHTML = `
         <input type="checkbox" id="copy-toggle">
-        <span>启用复制</span>
+        <span>启用自动复制功能</span>
     `;
     toggleSwitch.style.position = 'fixed';
     toggleSwitch.style.top = '10px';
@@ -111,7 +111,11 @@
     tooltip.innerText = '复制成功';
     document.body.appendChild(tooltip);
 
-    // 功能：点击数字或日期文本自动复制
+    // 正则表达式：检测 IP 地址（IPv4 和 IPv6）
+    const ipv4Regex = /(\b(?:\d{1,3}\.){3}\d{1,3}\b)/;
+    const ipv6Regex = /(\b([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b)/;
+
+    // 功能：点击数字、日期或IP地址文本自动复制
     document.addEventListener('click', (event) => {
         if (copyEnabled && event.target && event.target.innerText) {
             const text = event.target.innerText.trim();
@@ -123,8 +127,18 @@
 
             // 检查是否为日期文本（格式：YYYY-MM-DD HH:MM:SS）
             else if (/^\d{4}[-\/]\d{2}[-\/]\d{2} \d{2}:\d{2}:\d{2}$/.test(text)) {
-                const dateParts = text.split(' ')[0]; // 获取日期部分 YYYY-MM-DD
+                const dateParts = text.split(' ')[0];  // 获取日期部分 YYYY-MM-DD
                 copyToClipboard(dateParts);
+            }
+
+            // 检查是否为IPv4地址
+            else if (ipv4Regex.test(text)) {
+                copyToClipboard(text.match(ipv4Regex)[0]);  // 提取IPv4地址并复制
+            }
+
+            // 检查是否为IPv6地址
+            else if (ipv6Regex.test(text)) {
+                copyToClipboard(text.match(ipv6Regex)[0]);  // 提取IPv6地址并复制
             }
         }
     });
@@ -148,6 +162,6 @@
     // 页面加载后稍等一段时间进行更新检测
     setTimeout(() => {
         checkForUpdates();
-    }, 3000); // 页面加载后3秒钟进行检查
+    }, 3000);  // 页面加载后3秒钟进行检查
 
 })();
