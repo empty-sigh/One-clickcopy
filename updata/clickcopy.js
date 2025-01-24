@@ -62,10 +62,10 @@
         tooltip.innerText = '有新版本可用，请更新插件';
         document.body.appendChild(tooltip);
 
-        // 5000ms后自动关闭提示
+        // 10000ms后自动关闭提示
         setTimeout(() => {
             tooltip.style.display = 'none';
-        }, 5000);
+        }, 10000);
     }
 
     // 缓存控制：在请求时附加时间戳，避免缓存问题
@@ -162,6 +162,6 @@
     // 页面加载后稍等一段时间进行更新检测
     setTimeout(() => {
         checkForUpdates();
-    }, 3000);  // 页面加载后3秒钟进行检查
+    }, 10000);  // 页面加载后10秒钟进行检查
 
 })();
