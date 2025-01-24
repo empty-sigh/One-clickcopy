@@ -18,7 +18,7 @@
     const currentVersion = '0.6'; // 当前版本号
 
     // GitHub 版本信息 URL
-    const versionFileUrl = 'https://github.com/empty-sigh/One-clickcopy/blob/main/updata/version.json';
+    const versionFileUrl = 'https://raw.githubusercontent.com/empty-sigh/One-clickcopy/refs/heads/main/updata/version.json';
 
     // 检查更新的函数
     function checkForUpdates() {
