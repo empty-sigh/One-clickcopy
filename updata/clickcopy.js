@@ -78,7 +78,7 @@
     const toggleSwitch = document.createElement('label');
     toggleSwitch.innerHTML = `
         <input type="checkbox" id="copy-toggle">
-        <span>启用自动复制功能</span>
+        <span>复制</span>
     `;
     toggleSwitch.style.position = 'fixed';
     toggleSwitch.style.top = '10px';
